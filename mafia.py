@@ -1,5 +1,6 @@
 import random
 import logging
+import errors
 from enum import Enum, IntEnum
 
 logger = logging.getLogger(__name__)
@@ -67,57 +68,6 @@ class PlayerStatus(Enum):
 class DeathCause(Enum):
     VILLAGER_KILL = 0
     MAFIA_KILL = 1
-
-
-class Error(Exception):
-    """Base class for other exceptions"""
-    def __init__(self, context=None):
-        self.context = context
-
-
-class PlayerError(Error):
-    """Errors about some player or their actions"""
-    def __init__(self, player=None, context=None):
-        self.context = context
-        self.player = player
-
-
-class CantVoteError(PlayerError):
-    """Raised when the player can't vote right now"""
-
-
-class AlreadyVotedError(PlayerError):
-    """Raised when the player already voted"""
-
-
-class AlreadyJoinedError(PlayerError):
-    """Raised when the player already joined and can't join again"""
-
-
-class NotVotingScenarioError(PlayerError):
-    """Raised when there is no voting scenario active"""
-
-
-class AlreadyRunningError(Error):
-    """Raised when the action can only be done before the game starts"""
-
-
-class NotRunningError(Error):
-    """Raised when the action can only be done after the game starts"""
-
-
-class WinnerAlreadyDeadError(PlayerError):
-    """Couldnt kill, already dead"""
-
-
-class WrongVoteError(Error):
-    """Couldnt vote"""
-
-
-class NoUniqueWinnerError(Error):
-    """Raised when a vote has more than one winner"""
-    def __init__(self, vote=None):
-        self.vote = vote
 
 
 class Player():
@@ -196,9 +146,9 @@ class Game:
     def join(self, ID, name):
         player = Player(ID, name)
         if player in self.players:
-            raise AlreadyJoinedError(player)
+            raise errors.AlreadyJoinedError(player)
         elif self.status != GameStatus.NOT_RUNNING:
-            raise AlreadyRunningError
+            raise errors.AlreadyRunningError
         else:
             self.players.append(player)
         logger.debug('Added a player.')
@@ -206,7 +156,7 @@ class Game:
 
     def start(self):
         if self.status != GameStatus.NOT_RUNNING:
-            raise AlreadyRunningError
+            raise errors.AlreadyRunningError
         self.cop_vote_finished = False
         self.mafia_vote_finished = False
         self.day_vote_finished = False
@@ -221,32 +171,32 @@ class Game:
 
     def stop(self):
         if self.status == GameStatus.NOT_RUNNING:
-            raise NotRunningError
+            raise errors.NotRunningError
         self.reset()
         logger.debug('Stopped the game.')
 
     def vote_user(self, p, target, target2=None):
         p = self.players.index(Player(p))
         if (Player(target) not in self.players):
-            raise WrongVoteError
+            raise errors.WrongVoteError
         else:
             target = self.players.index(Player(target))
         if self.players[p].last_vote is not None:
-            raise AlreadyVotedError(self.players[p])
+            raise errors.AlreadyVotedError(self.players[p])
         if self.status not in [GameStatus.DAY_VOTE, GameStatus.NIGHT_VOTE]:
             # not a voting scenario
-            raise NotVotingScenarioError
+            raise errors.NotVotingScenarioError
         if self.status == GameStatus.NIGHT_VOTE:
             if self.players[p].role not in [Role.MAFIA, Role.COP]:
-                raise CantVoteError(self.players[p])
+                raise errors.CantVoteError(self.players[p])
             elif (self.players[p].role == Role.MAFIA and
                   self.mafia_vote_finished):
-                raise CantVoteError(self.players[p])
+                raise errors.CantVoteError(self.players[p])
             elif (self.players[p].role == Role.COP and
                   self.cop_vote_finished):
-                raise CantVoteError(self.players[p])
+                raise errors.CantVoteError(self.players[p])
             elif self.players[p].is_dead():
-                raise CantVoteError(self.players[p])
+                raise errors.CantVoteError(self.players[p])
         self.players[p].last_vote = target
         logger.debug(f'{self.players[p].name} voted {target}')
         if self.status == GameStatus.DAY_VOTE:
@@ -421,7 +371,7 @@ class Game:
             return True
         else:
             # not a voting scenario
-            raise NotVotingScenarioError
+            raise errors.NotVotingScenarioError
 
     def execute_votes(self):
         if self.status == GameStatus.DAY_VOTE:
@@ -430,7 +380,7 @@ class Game:
             self.execute_night_votes()
         else:
             # not a voting scenario
-            raise NotVotingScenarioError
+            raise errors.NotVotingScenarioError
 
     def execute_day_votes(self):
         self.day_vote_finished = False
@@ -447,8 +397,8 @@ class Game:
         try:
             target = self.kill_highest_from_voted(voted_players,
                                                   DeathCause.VILLAGER_KILL)
-        except NoUniqueWinnerError:
-            raise NoUniqueWinnerError(Vote.DAY_VOTE)
+        except errors.NoUniqueWinnerError:
+            raise errors.NoUniqueWinnerError(Vote.DAY_VOTE)
         else:
             self.day_vote_finished = True
             consequence = Consequence(VoteConsequence.VILLAGERKILL,
@@ -483,8 +433,8 @@ class Game:
         try:
             target = self.kill_highest_from_voted(voted_players,
                                                   DeathCause.MAFIA_KILL)
-        except NoUniqueWinnerError:
-            raise NoUniqueWinnerError(Vote.MAFIA_VOTE)
+        except errors.NoUniqueWinnerError:
+            raise errors.NoUniqueWinnerError(Vote.MAFIA_VOTE)
         else:
             self.mafia_vote_finished = True
             consequence = Consequence(VoteConsequence.MAFIAKILL,
@@ -515,8 +465,8 @@ class Game:
             target = self.players[self.get_most_common_vote(voted_players)]
             # TODO
             pass
-        except NoUniqueWinnerError:
-            raise NoUniqueWinnerError(Vote.COP_VOTE)
+        except errors.NoUniqueWinnerError:
+            raise errors.NoUniqueWinnerError(Vote.COP_VOTE)
         else:
             self.cop_vote_finished = True
             consequence = Consequence(VoteConsequence.LOOKUP, target)
@@ -539,11 +489,11 @@ class Game:
             if not winner.is_dead():
                 winner.kill(kill_cause)
             else:
-                raise WinnerAlreadyDeadError(winner)
+                raise errors.WinnerAlreadyDeadError(winner)
             return winner
         else:
             # there wasn't a unique winner
-            raise NoUniqueWinnerError
+            raise errors.NoUniqueWinnerError
 
     def get_most_common_vote(self, votes):
         vote_count = [0] * len(self.players)

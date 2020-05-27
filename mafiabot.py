@@ -15,6 +15,8 @@ import mafia
 # import the mafiabot utils module
 from mafiabot_utils import MafiaBot, ErrorContext, Channel, Permissions
 
+import errors
+
 load_dotenv()
 LANG_THEME = os.getenv('LANG_THEME')
 lang = LANG_THEME
@@ -132,7 +134,7 @@ async def join(ctx):
     try:
         name = ctx.author.nick if ctx.author.nick else ctx.author.name
         player = myGame.join(ctx.author.id, name)
-    except mafia.Error as err:
+    except errors.Error as err:
         logger.exception(_('Failed to join'))
         err.context = ErrorContext.JOIN_ATTEMPT
         name = ctx.author.nick if ctx.author.nick else ctx.author.name
@@ -175,9 +177,9 @@ async def start(ctx):
     cmdlog(ctx)
     try:
         if len(myGame.players) < 2:
-            raise mafia.Error
+            raise errors.Error
         myGame.start()
-    except mafia.Error as err:
+    except errors.Error as err:
         # err.context = ErrorContext.START_ATTEMPT
         logger.exception(_('Failed to start'))
         msg = myMafiaBot.error_message(err)
@@ -233,7 +235,7 @@ async def stop(ctx):
         await remove_all_discord_roles(ctx)
         await myMafiaBot.remove_userchannels(ctx.guild)
         myGame.stop()
-    except mafia.Error as err:
+    except errors.Error as err:
         logger.exception(_('Failed to stop'))
         msg = myMafiaBot.error_message(err)
         logger.warning(msg)
@@ -279,7 +281,7 @@ async def cycle(ctx, restart_timer=True, check_mafia=False):
                     logger.debug(con)
                     await finished_vote_compute(ctx, "", mafia_return)
         myGame.cycle()
-    except mafia.Error as err:
+    except errors.Error as err:
         logger.exception(_('Failed to cycle.'))
         msg = myMafiaBot.error_message(err)
         logger.warning(msg)
@@ -346,7 +348,7 @@ async def vote(ctx, member: discord.Member):
     cmdlog(ctx)
     try:
         vote_return_object = myGame.vote_user(ctx.author.id, member.id)
-    except mafia.Error as err:
+    except errors.Error as err:
         logger.exception(_('Failed to vote.'))
         msg = myMafiaBot.error_message(err)
         logger.warning(msg)

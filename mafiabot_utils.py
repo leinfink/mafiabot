@@ -1,4 +1,5 @@
 import mafia
+import errors
 
 import os
 import logging
@@ -235,7 +236,7 @@ class MafiaBot():
                 if roles:
                     msg += " [" + self.read_role(p.role) + "]"
                 msg += "\n"
-        except mafia.Error as err:
+        except errors.Error as err:
             err.context = ErrorContext.PRINT_PLAYERS_ATTEMPT
             msg = self.error_message(err)
         finally:
@@ -244,7 +245,7 @@ class MafiaBot():
     def print_game_status(self):
         try:
             msg = self.read_game_status(self.game.status)
-        except mafia.Error as err:
+        except errors.Error as err:
             err.context = ErrorContext.PRINT_GAME_STATUS_ATTEMPT
             msg = self.error_message(err)
         finally:
@@ -252,15 +253,15 @@ class MafiaBot():
 
     def error_message(self, err):
         switcher = {
-            mafia.AlreadyVotedError: self.already_voted_err,
-            mafia.CantVoteError: self.cant_vote_err,
-            mafia.NotVotingScenarioError: self.no_voting_scenario_err,
-            mafia.NoUniqueWinnerError: self.no_unique_vote_err,
-            mafia.AlreadyRunningError: self.already_running_err,
-            mafia.AlreadyJoinedError: self.already_joined_err,
-            mafia.NotRunningError: self.not_running_err,
-            mafia.WinnerAlreadyDeadError: self.winner_dead_err,
-            mafia.Error: self.default_error
+            errors.AlreadyVotedError: self.already_voted_err,
+            errors.CantVoteError: self.cant_vote_err,
+            errors.NotVotingScenarioError: self.no_voting_scenario_err,
+            errors.NoUniqueWinnerError: self.no_unique_vote_err,
+            errors.AlreadyRunningError: self.already_running_err,
+            errors.AlreadyJoinedError: self.already_joined_err,
+            errors.NotRunningError: self.not_running_err,
+            errors.WinnerAlreadyDeadError: self.winner_dead_err,
+            errors.Error: self.default_error
         }
         msg = switcher.get(err.__class__)(err)
         return msg
