@@ -1,0 +1,146 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-25 01:28+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: mafiabot_utils.py:200
+msgid "Only"
+msgstr ""
+
+#: mafiabot_utils.py:201
+msgid "seconds left!"
+msgstr ""
+
+#: mafiabot_utils.py:213
+msgid "Time ran out!"
+msgstr ""
+
+#: mafiabot_utils.py:229
+msgid "alive"
+msgstr ""
+
+#: mafiabot_utils.py:230
+msgid "dead"
+msgstr ""
+
+#: mafiabot_utils.py:231
+msgid "waiting"
+msgstr ""
+
+#: mafiabot_utils.py:235
+msgid "unknown status"
+msgstr ""
+
+#: mafiabot_utils.py:276
+msgid "someone"
+msgstr ""
+
+#: mafiabot_utils.py:279
+msgid "trying to print game status"
+msgstr ""
+
+#: mafiabot_utils.py:281
+msgid "trying to print players"
+msgstr ""
+
+#: mafiabot_utils.py:283
+msgid "tried to join"
+msgstr ""
+
+#: mafiabot_utils.py:285
+msgid "trying to start game"
+msgstr ""
+
+#: mafiabot_utils.py:290
+msgid "An unidentified error occurred."
+msgstr ""
+
+#: mafiabot_utils.py:293
+msgid "cannot vote right now."
+msgstr ""
+
+#: mafiabot_utils.py:296
+msgid "already voted."
+msgstr ""
+
+#: mafiabot_utils.py:299
+msgid "cannot be killed since they already died."
+msgstr ""
+
+#: mafiabot_utils.py:303
+msgid "There is no vote at the moment."
+msgstr ""
+
+#: mafiabot_utils.py:307
+msgid "The mafia vote did not have a clear result."
+msgstr ""
+
+#: mafiabot_utils.py:309
+msgid "The cop vote did not have a clear result."
+msgstr ""
+
+#: mafiabot_utils.py:311
+msgid "The vote result was not clear."
+msgstr ""
+
+#: mafiabot_utils.py:314
+msgid "The game has already started."
+msgstr ""
+
+#: mafiabot_utils.py:317 mafiabot_utils.py:324
+msgid "The game is not running."
+msgstr ""
+
+#: mafiabot_utils.py:320
+msgid "already joined."
+msgstr ""
+
+#: mafiabot_utils.py:325
+msgid "It's day discussion time."
+msgstr ""
+
+#: mafiabot_utils.py:326
+msgid "It's day voting time."
+msgstr ""
+
+#: mafiabot_utils.py:327
+msgid "It's night discussion time."
+msgstr ""
+
+#: mafiabot_utils.py:328
+msgid "It's night voting time."
+msgstr ""
+
+#: mafiabot_utils.py:334
+msgid "villager"
+msgstr ""
+
+#: mafiabot_utils.py:335
+msgid "mafioso"
+msgstr ""
+
+#: mafiabot_utils.py:336
+msgid "cop"
+msgstr ""
+
+#: mafiabot_utils.py:337
+msgid "unassigned"
+msgstr ""
+
+#: mafiabot_utils.py:353
+msgid "Your bed"
+msgstr ""
