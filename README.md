@@ -1,5 +1,6 @@
 # mafiabot
 Discord bot for the party game Mafia (or Werewolves).
+Players get automatically assigned to secret (voice+text) channels.
 
 Needs to have a .env file containing the following variables:
 
