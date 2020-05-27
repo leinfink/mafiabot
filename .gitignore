@@ -1,3 +1,4 @@
 *.env
 /logs/
 err.log
+/__pycache__/
