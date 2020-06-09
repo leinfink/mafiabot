@@ -118,7 +118,7 @@ class Player():
 class Game:
     MAFIA_RATIO = 0.6  # x mafias per players
     COP_RATIO = 0.6  # x cops per players
-    MAFIA_AMOUNTS = [0, 1, 1, 1, 2, 2, 2, 3, 3, 3]  # mafia for player counts
+    MAFIA_AMOUNTS = [0, 1, 1, 1, 2, 2, 2, 2, 2, 3]  # mafia for player counts
     COP_AMOUNTS = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # cops for player counts
 
     def __init__(self):
