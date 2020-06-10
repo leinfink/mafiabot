@@ -47,3 +47,8 @@ class NoUniqueWinnerError(Error):
     """Raised when a vote has more than one winner"""
     def __init__(self, vote=None):
         self.vote = vote
+
+        
+class LastDrawnVoteError(NoUniqueWinnerError):
+    """Raised when a vote has more than one winner and this triggers
+    a vote skip / game cycle"""
