@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-25 01:28+0300\n"
+"POT-Creation-Date: 2020-06-11 11:14+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,71 +17,60 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: mafiabot.py:70
+#: mafiabot.py:72
 msgid "mafiabot"
 msgstr ""
 
-#: mafiabot.py:80
+#: mafiabot.py:82
 msgid "command \""
 msgstr ""
 
-#: mafiabot.py:81
+#: mafiabot.py:83
 msgid "invoked by "
 msgstr ""
 
-#: mafiabot.py:105
+#: mafiabot.py:107
 msgid "Mafia"
 msgstr ""
 
-#: mafiabot.py:106
+#: mafiabot.py:108
 msgid "has connected to Discord!"
 msgstr ""
 
-#: mafiabot.py:109
+#: mafiabot.py:111
 msgid "is connected to the following guild:"
 msgstr ""
 
-#: mafiabot.py:131
+#: mafiabot.py:133
 msgid "join"
 msgstr ""
 
-#: mafiabot.py:131
+#: mafiabot.py:133
 msgid "Join a game."
 msgstr ""
 
-#: mafiabot.py:138
+#: mafiabot.py:140
 msgid "Failed to join"
 msgstr ""
 
-#: mafiabot.py:147
+#: mafiabot.py:149
 msgid "joined the game."
 msgstr ""
 
-#: mafiabot.py:156
-msgid "start"
+#: mafiabot.py:157
+msgid "rules"
 msgstr ""
 
-#: mafiabot.py:156
-msgid "Start the game."
+#: mafiabot.py:157
+msgid "Read the rules."
 msgstr ""
 
-#: mafiabot.py:165
-msgid "Failed to start"
+#: mafiabot.py:159 mafiabot.py:193
+msgid ""
+"— Some basics: ```There's villagers, mafia, cops and sometimes doctors.```"
 msgstr ""
 
-#: mafiabot.py:170
-msgid "Game started!"
-msgstr ""
-
-#: mafiabot.py:171
-msgid "**Game started!**"
-msgstr ""
-
-#: mafiabot.py:172
-msgid "— Some basics: ```There's villagers, mafia, and cops.```"
-msgstr ""
-
-#: mafiabot.py:173
+#: mafiabot.py:160 mafiabot.py:194
 msgid ""
 "``` The only command you need to  play is !vote <user> (or just ping them, "
 "<@user>).``````You can vote as soon as you like, but you can't take it back. "
@@ -90,13 +79,13 @@ msgid ""
 "        of"
 msgstr ""
 
-#: mafiabot.py:178
+#: mafiabot.py:165 mafiabot.py:199
 msgid ""
 " minutes, if there is no result by then, your action goes to waste.\n"
 "        Nighttime lasts "
 msgstr ""
 
-#: mafiabot.py:181
+#: mafiabot.py:168 mafiabot.py:202
 msgid ""
 " minutes.``````In the member list\n"
 "        on the right, you can see who's alive and who's dead. If this\n"
@@ -109,166 +98,222 @@ msgid ""
 "Go join the village voice channel, then close your eyes!\n"
 msgstr ""
 
-#: mafiabot.py:188
-msgid "mafioso"
+#: mafiabot.py:177
+msgid "start"
 msgstr ""
 
-#: mafiabot.py:188
-msgid "mafiosi"
+#: mafiabot.py:177
+msgid "Start the game."
 msgstr ""
 
-#: mafiabot.py:189
-msgid "cop"
-msgstr ""
-
-#: mafiabot.py:189
-msgid "cops"
+#: mafiabot.py:186
+msgid "Failed to start"
 msgstr ""
 
 #: mafiabot.py:191
-msgid "villager"
-msgstr ""
-
-#: mafiabot.py:191
-msgid "villagers"
+msgid "Game started!"
 msgstr ""
 
 #: mafiabot.py:192
+msgid "**Game started!**"
+msgstr ""
+
+#: mafiabot.py:209
+msgid "mafioso"
+msgstr ""
+
+#: mafiabot.py:209
+msgid "mafiosi"
+msgstr ""
+
+#: mafiabot.py:210
+msgid "cop"
+msgstr ""
+
+#: mafiabot.py:210
+msgid "cops"
+msgstr ""
+
+#: mafiabot.py:211
+msgid "doctor"
+msgstr ""
+
+#: mafiabot.py:211
+msgid "doctors"
+msgstr ""
+
+#: mafiabot.py:213
+msgid "villager"
+msgstr ""
+
+#: mafiabot.py:213 mafiabot.py:333
+msgid "villagers"
+msgstr ""
+
+#: mafiabot.py:214
 msgid "**There is"
 msgstr ""
 
-#: mafiabot.py:210
+#: mafiabot.py:235
 msgid "stop"
 msgstr ""
 
-#: mafiabot.py:210
+#: mafiabot.py:235
 msgid "Stop the game."
 msgstr ""
 
-#: mafiabot.py:219
+#: mafiabot.py:245
 msgid "Failed to stop"
 msgstr ""
 
-#: mafiabot.py:224
+#: mafiabot.py:250
 msgid "Game stopped!"
 msgstr ""
 
-#: mafiabot.py:236
+#: mafiabot.py:263
 msgid "next"
 msgstr ""
 
-#: mafiabot.py:236
+#: mafiabot.py:263
 msgid "Go to the next game phase."
 msgstr ""
 
-#: mafiabot.py:264
+#: mafiabot.py:291
 msgid "Failed to cycle."
 msgstr ""
 
-#: mafiabot.py:269
+#: mafiabot.py:296
 msgid "Cycled game phase."
 msgstr ""
 
-#: mafiabot.py:283
+#: mafiabot.py:310
 msgid "Villager vote ended."
 msgstr ""
 
-#: mafiabot.py:284
+#: mafiabot.py:311
 msgid "The mafia has decided."
 msgstr ""
 
-#: mafiabot.py:285
+#: mafiabot.py:312
 msgid "The cops have made their choice."
 msgstr ""
 
-#: mafiabot.py:289
+#: mafiabot.py:313
+msgid "The doctors have made their choice."
+msgstr ""
+
+#: mafiabot.py:317
 msgid "They decided to lynch"
 msgstr ""
 
-#: mafiabot.py:290
+#: mafiabot.py:318
 msgid "They decided to kill"
 msgstr ""
 
-#: mafiabot.py:291
+#: mafiabot.py:319
 msgid "They decided to look at"
 msgstr ""
 
-#: mafiabot.py:299
-msgid "They are a"
-msgstr ""
-
-#: mafiabot.py:317
-msgid "vote"
-msgstr ""
-
-#: mafiabot.py:317
-msgid "Vote for a user."
-msgstr ""
-
-#: mafiabot.py:324
-msgid "Failed to vote."
+#: mafiabot.py:320
+msgid "They decided to protect"
 msgstr ""
 
 #: mafiabot.py:329
-msgid "voted for"
+msgid "They are aligned with the"
 msgstr ""
 
 #: mafiabot.py:331
-msgid "Voted."
-msgstr ""
-
-#: mafiabot.py:350 mafiabot.py:351
-msgid "Day"
-msgstr ""
-
-#: mafiabot.py:352 mafiabot.py:353
-msgid "Night"
+msgid "mafia"
 msgstr ""
 
 #: mafiabot.py:354
+msgid "status"
+msgstr ""
+
+#: mafiabot.py:361
+msgid "vote"
+msgstr ""
+
+#: mafiabot.py:361
+msgid "Vote for a user."
+msgstr ""
+
+#: mafiabot.py:368
+msgid "Failed to vote."
+msgstr ""
+
+#: mafiabot.py:373
+msgid "Failed to vote again. Switch to next game state."
+msgstr ""
+
+#: mafiabot.py:379
+msgid "voted for"
+msgstr ""
+
+#: mafiabot.py:381
+msgid "Voted."
+msgstr ""
+
+#: mafiabot.py:400 mafiabot.py:401
+msgid "Day"
+msgstr ""
+
+#: mafiabot.py:402 mafiabot.py:403
+msgid "Night"
+msgstr ""
+
+#: mafiabot.py:404
 msgid "Not running"
 msgstr ""
 
-#: mafiabot.py:391
+#: mafiabot.py:448
 msgid "Game over!"
 msgstr ""
 
-#: mafiabot.py:393
+#: mafiabot.py:450
 msgid "The villagers won!"
 msgstr ""
 
-#: mafiabot.py:395
+#: mafiabot.py:452
 msgid "The mafia won!"
 msgstr ""
 
-#: mafiabot.py:409
+#: mafiabot.py:465
 msgid "The mafia gather in "
 msgstr ""
 
-#: mafiabot.py:412
+#: mafiabot.py:468
 msgid "The cops gather in "
 msgstr ""
 
-#: mafiabot.py:443
+#: mafiabot.py:472
+msgid "The doctors gather in "
+msgstr ""
+
+#: mafiabot.py:505
 msgid "Prepare to commit a heinous crime!"
 msgstr ""
 
-#: mafiabot.py:444
+#: mafiabot.py:506
 msgid "Prepare to show off your investigative prowess!"
 msgstr ""
 
-#: mafiabot.py:580
+#: mafiabot.py:509
+msgid "Decide who to protect!"
+msgstr ""
+
+#: mafiabot.py:653
 msgid "Your bed"
 msgstr ""
 
-#: mafiabot.py:656
+#: mafiabot.py:741
 msgid "Channel permissions reset."
 msgstr ""
 
-#: mafiabot.py:691
+#: mafiabot.py:776
 msgid "Sent status update."
 msgstr ""
 
-#: mafiabot.py:699
+#: mafiabot.py:784
 msgid "Connecting to Discord..."
 msgstr ""

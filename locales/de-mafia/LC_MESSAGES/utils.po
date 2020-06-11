@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-25 01:28+0300\n"
-"PO-Revision-Date: 2020-05-25 01:36+0300\n"
+"POT-Creation-Date: 2020-06-11 11:12+0300\n"
+"PO-Revision-Date: 2020-06-11 11:14+0300\n"
 "Last-Translator: henrik <tranfunzel99@gmail.com>\n"
 "Language-Team: German <->\n"
 "Language: de\n"
@@ -19,134 +19,143 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Gtranslator 3.36.0\n"
 
-#: mafiabot_utils.py:200
+#: mafiabot_utils.py:221
 msgid "Only"
 msgstr "Nur"
 
-#: mafiabot_utils.py:201
+#: mafiabot_utils.py:222
 msgid "seconds left!"
 msgstr "Sekunden übrig"
 
-#: mafiabot_utils.py:213
+#: mafiabot_utils.py:236
 msgid "Time ran out!"
 msgstr "Zeit abgelaufen!"
 
-#: mafiabot_utils.py:229
+#: mafiabot_utils.py:252
 msgid "alive"
 msgstr "lebendig"
 
-#: mafiabot_utils.py:230
+#: mafiabot_utils.py:253
 msgid "dead"
 msgstr "tot"
 
-#: mafiabot_utils.py:231
+#: mafiabot_utils.py:254
 msgid "waiting"
 msgstr "wartet"
 
-#: mafiabot_utils.py:235
+#: mafiabot_utils.py:258
 msgid "unknown status"
 msgstr "unbekannter Status"
 
-#: mafiabot_utils.py:276
+#: mafiabot_utils.py:300
 msgid "someone"
 msgstr "jemand"
 
-#: mafiabot_utils.py:279
+#: mafiabot_utils.py:303
 msgid "trying to print game status"
 msgstr "versucht, Spielstatus auszugeben"
 
-#: mafiabot_utils.py:281
+#: mafiabot_utils.py:305
 msgid "trying to print players"
 msgstr "versucht, Spielerdaten auszugeben"
 
-#: mafiabot_utils.py:283
+#: mafiabot_utils.py:307
 msgid "tried to join"
 msgstr "versucht beizutreten"
 
-#: mafiabot_utils.py:285
+#: mafiabot_utils.py:309
 msgid "trying to start game"
 msgstr "versucht, das Spiel zu starten"
 
-#: mafiabot_utils.py:290
+#: mafiabot_utils.py:314
 msgid "An unidentified error occurred."
 msgstr "Ein unbekannter Fehler ist aufgetreten."
 
-#: mafiabot_utils.py:293
+#: mafiabot_utils.py:317
 msgid "cannot vote right now."
 msgstr "kann gerade nicht abstimmen."
 
-#: mafiabot_utils.py:296
+#: mafiabot_utils.py:320
 msgid "already voted."
 msgstr "hat schon gewählt."
 
-#: mafiabot_utils.py:299
+#: mafiabot_utils.py:323
 msgid "cannot be killed since they already died."
 msgstr "kann nicht doppelt getötet werden."
 
-#: mafiabot_utils.py:303
+#: mafiabot_utils.py:327
 msgid "There is no vote at the moment."
 msgstr "Es läuft gerade keine Abstimmung."
 
-#: mafiabot_utils.py:307
+#: mafiabot_utils.py:331
 msgid "The mafia vote did not have a clear result."
 msgstr "Die Abstimmung der Mafia hatte kein eindeutiges Ergebnis."
 
-#: mafiabot_utils.py:309
+#: mafiabot_utils.py:333
 msgid "The cop vote did not have a clear result."
 msgstr "Die Abstimmung der Cops hatte kein eindeutiges Ergebnis."
 
-#: mafiabot_utils.py:311
+#: mafiabot_utils.py:335
 msgid "The vote result was not clear."
 msgstr "Die Abstimmung hatte kein eindeutiges Ergebnis."
 
-#: mafiabot_utils.py:314
+#: mafiabot_utils.py:338
+msgid "The vote result was, again, not clear, so this vote will be skipped."
+msgstr ""
+"Die Abstimmung hatte wiederum kein eindeutiges Ergebnis und wird beendet."
+
+#: mafiabot_utils.py:341
 msgid "The game has already started."
 msgstr "Das Spiel hat schon angefangen."
 
-#: mafiabot_utils.py:317 mafiabot_utils.py:324
+#: mafiabot_utils.py:344 mafiabot_utils.py:351
 msgid "The game is not running."
 msgstr "Das Spiel läuft nicht."
 
-#: mafiabot_utils.py:320
+#: mafiabot_utils.py:347
 msgid "already joined."
 msgstr "ist schon beigetreten"
 
-#: mafiabot_utils.py:325
+#: mafiabot_utils.py:352
 msgid "It's day discussion time."
 msgstr ""
 "Der Tag beginnt! Die Dorfbewohner erwachen und wollen Rache! Wer soll "
 "gelyncht werden?"
 
-#: mafiabot_utils.py:326
+#: mafiabot_utils.py:353
 msgid "It's day voting time."
 msgstr ""
 "Der Tag beginnt! Die Dorfbewohner erwachen und wollen Rache! Wer soll "
 "gelyncht werden?"
 
-#: mafiabot_utils.py:327
+#: mafiabot_utils.py:354
 msgid "It's night discussion time."
 msgstr "Es wird Nacht!"
 
-#: mafiabot_utils.py:328
+#: mafiabot_utils.py:355
 msgid "It's night voting time."
 msgstr "Es wird Nacht!"
 
-#: mafiabot_utils.py:334
+#: mafiabot_utils.py:361
 msgid "villager"
 msgstr "Dorfbewohner"
 
-#: mafiabot_utils.py:335
+#: mafiabot_utils.py:362
 msgid "mafioso"
 msgstr "Mafioso"
 
-#: mafiabot_utils.py:336
+#: mafiabot_utils.py:363
 msgid "cop"
 msgstr "Cop"
 
-#: mafiabot_utils.py:337
+#: mafiabot_utils.py:364
 msgid "unassigned"
 msgstr "nicht zugewiesen"
 
-#: mafiabot_utils.py:353
+#: mafiabot_utils.py:365
+msgid "doctor"
+msgstr "Doktor"
+
+#: mafiabot_utils.py:381
 msgid "Your bed"
 msgstr "Dein Bett"

@@ -60,8 +60,8 @@ COP_CHANNEL = int(os.getenv('DISCORD_COP_CHANNEL'))
 OPEN_VOICE_CHANNEL = int(os.getenv('DISCORD_OPEN_VOICE_CHANNEL'))
 MAFIA_VOICE_CHANNEL = int(os.getenv('DISCORD_MAFIA_VOICE_CHANNEL'))
 COP_VOICE_CHANNEL = int(os.getenv('DISCORD_COP_VOICE_CHANNEL'))
-DOCTOR_CHANNEL = int(os.getenv('DISCORD_DOC_CHANNEL'))
-DOCTOR_VOICE_CHANNEL = int(os.getenv('DISCORD_DOC_VOICE_CHANNEL'))
+DOCTOR_CHANNEL = int(os.getenv('DISCORD_DOCTOR_CHANNEL'))
+DOCTOR_VOICE_CHANNEL = int(os.getenv('DISCORD_DOCTOR_VOICE_CHANNEL'))
 ALIVE_ROLE = int(os.getenv('DISCORD_ALIVE_ROLE'))
 DEAD_ROLE = int(os.getenv('DISCORD_DEAD_ROLE'))
 DISCORD_CATEGORY = int(os.getenv('DISCORD_CATEGORY'))
@@ -317,7 +317,8 @@ async def finished_vote_compute(ctx, msg, vote_return_object, update=True):
         mafia.VoteConsequence.VILLAGERKILL: _('They decided to lynch'),
         mafia.VoteConsequence.MAFIAKILL: _('They decided to kill'),
         mafia.VoteConsequence.LOOKUP: _('They decided to look at'),
-        mafia.VoteConsequence.PROTECTION: _('They decided to protect')
+        mafia.VoteConsequence.PROTECTION: _('They decided to protect'),
+        mafia.VoteConsequence.MAFIAKILLFAILED: ""
     }
     msg2 += "\n**" + switcher.get(vote_return_object.consequence.
                                   voteconsequence)
@@ -325,15 +326,20 @@ async def finished_vote_compute(ctx, msg, vote_return_object, update=True):
     logger.debug(msg2)
     await change_bot_name(ctx)
     if vote_return_object.vote == mafia.Vote.COP_VOTE:
-        msg3 = "\n" + _('They are a')
-        msg3 += " " + myMafiaBot.read_role(
-            vote_return_object.consequence.target.role) + "."
+        msg3 = "\n" + _('They are aligned with the')
+        if vote_return_object.consequence.target.role in [mafia.Role.MAFIA]:
+            role = _('mafia')
+        else:
+            role = _('villagers')
+        msg3 += " " + role + "."
         await ctx.send(msg+msg2+msg3)
     if vote_return_object.vote == mafia.Vote.MAFIA_VOTE:
         if msg != "":
             await ctx.send(msg)
         logger.debug('mafiavotesending')
-        await myMafiaBot.get_channels(ctx.guild)['open_channel'].send(
+        if not (vote_return_object.consequence.voteconsequence ==
+                mafia.VoteConsequence.MAFIAKILLFAILED):
+            await myMafiaBot.get_channels(ctx.guild)['open_channel'].send(
                 msg2)
     if vote_return_object.vote == mafia.Vote.DOCTOR_VOTE:
         await ctx.send(msg+msg2)

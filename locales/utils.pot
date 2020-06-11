@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-25 01:28+0300\n"
+"POT-Creation-Date: 2020-06-11 11:12+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,130 +17,138 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: mafiabot_utils.py:200
+#: mafiabot_utils.py:221
 msgid "Only"
 msgstr ""
 
-#: mafiabot_utils.py:201
+#: mafiabot_utils.py:222
 msgid "seconds left!"
 msgstr ""
 
-#: mafiabot_utils.py:213
+#: mafiabot_utils.py:236
 msgid "Time ran out!"
 msgstr ""
 
-#: mafiabot_utils.py:229
+#: mafiabot_utils.py:252
 msgid "alive"
 msgstr ""
 
-#: mafiabot_utils.py:230
+#: mafiabot_utils.py:253
 msgid "dead"
 msgstr ""
 
-#: mafiabot_utils.py:231
+#: mafiabot_utils.py:254
 msgid "waiting"
 msgstr ""
 
-#: mafiabot_utils.py:235
+#: mafiabot_utils.py:258
 msgid "unknown status"
 msgstr ""
 
-#: mafiabot_utils.py:276
+#: mafiabot_utils.py:300
 msgid "someone"
 msgstr ""
 
-#: mafiabot_utils.py:279
+#: mafiabot_utils.py:303
 msgid "trying to print game status"
 msgstr ""
 
-#: mafiabot_utils.py:281
+#: mafiabot_utils.py:305
 msgid "trying to print players"
 msgstr ""
 
-#: mafiabot_utils.py:283
+#: mafiabot_utils.py:307
 msgid "tried to join"
 msgstr ""
 
-#: mafiabot_utils.py:285
+#: mafiabot_utils.py:309
 msgid "trying to start game"
 msgstr ""
 
-#: mafiabot_utils.py:290
+#: mafiabot_utils.py:314
 msgid "An unidentified error occurred."
 msgstr ""
 
-#: mafiabot_utils.py:293
+#: mafiabot_utils.py:317
 msgid "cannot vote right now."
 msgstr ""
 
-#: mafiabot_utils.py:296
+#: mafiabot_utils.py:320
 msgid "already voted."
 msgstr ""
 
-#: mafiabot_utils.py:299
+#: mafiabot_utils.py:323
 msgid "cannot be killed since they already died."
 msgstr ""
 
-#: mafiabot_utils.py:303
+#: mafiabot_utils.py:327
 msgid "There is no vote at the moment."
 msgstr ""
 
-#: mafiabot_utils.py:307
+#: mafiabot_utils.py:331
 msgid "The mafia vote did not have a clear result."
 msgstr ""
 
-#: mafiabot_utils.py:309
+#: mafiabot_utils.py:333
 msgid "The cop vote did not have a clear result."
 msgstr ""
 
-#: mafiabot_utils.py:311
+#: mafiabot_utils.py:335
 msgid "The vote result was not clear."
 msgstr ""
 
-#: mafiabot_utils.py:314
+#: mafiabot_utils.py:338
+msgid "The vote result was, again, not clear, so this vote will be skipped."
+msgstr ""
+
+#: mafiabot_utils.py:341
 msgid "The game has already started."
 msgstr ""
 
-#: mafiabot_utils.py:317 mafiabot_utils.py:324
+#: mafiabot_utils.py:344 mafiabot_utils.py:351
 msgid "The game is not running."
 msgstr ""
 
-#: mafiabot_utils.py:320
+#: mafiabot_utils.py:347
 msgid "already joined."
 msgstr ""
 
-#: mafiabot_utils.py:325
+#: mafiabot_utils.py:352
 msgid "It's day discussion time."
 msgstr ""
 
-#: mafiabot_utils.py:326
+#: mafiabot_utils.py:353
 msgid "It's day voting time."
 msgstr ""
 
-#: mafiabot_utils.py:327
+#: mafiabot_utils.py:354
 msgid "It's night discussion time."
 msgstr ""
 
-#: mafiabot_utils.py:328
+#: mafiabot_utils.py:355
 msgid "It's night voting time."
 msgstr ""
 
-#: mafiabot_utils.py:334
+#: mafiabot_utils.py:361
 msgid "villager"
 msgstr ""
 
-#: mafiabot_utils.py:335
+#: mafiabot_utils.py:362
 msgid "mafioso"
 msgstr ""
 
-#: mafiabot_utils.py:336
+#: mafiabot_utils.py:363
 msgid "cop"
 msgstr ""
 
-#: mafiabot_utils.py:337
+#: mafiabot_utils.py:364
 msgid "unassigned"
 msgstr ""
 
-#: mafiabot_utils.py:353
+#: mafiabot_utils.py:365
+msgid "doctor"
+msgstr ""
+
+#: mafiabot_utils.py:381
 msgid "Your bed"
 msgstr ""

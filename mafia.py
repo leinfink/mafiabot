@@ -42,6 +42,7 @@ class VoteConsequence(Enum):
     MAFIAKILL = 1
     LOOKUP = 2
     PROTECTION = 3
+    MAFIAKILLFAILED = 4
 
 
 class Consequence():
@@ -123,7 +124,8 @@ class Game:
     COP_RATIO = 0.6  # x cops per players
     MAFIA_AMOUNTS = [0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3]  # mafia for player counts
     COP_AMOUNTS = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # cops for player counts
-    DOCTOR_AMOUNTS = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
+    #DOCTOR_AMOUNTS = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
+    DOCTOR_AMOUNTS = [0,0,0,1,1,1,1,1,1,1,1,1,1]
 
     def __init__(self):
         self._status = GameStatus.NOT_RUNNING
@@ -509,8 +511,12 @@ class Game:
             raise errors.NoUniqueWinnerError(Vote.MAFIA_VOTE)
         else:
             self.mafia_vote_finished = True
-            consequence = Consequence(VoteConsequence.MAFIAKILL,
-                                      target)
+            if target == VoteConsequence.MAFIAKILLFAILED:
+                consequence = Consequence(VoteConsequence.MAFIAKILLFAILED,
+                                          target)
+            else:
+                consequence = Consequence(VoteConsequence.MAFIAKILL,
+                                          target)
         finally:
             # clear up votes (even if there was no unique winner)
             # people have to revote
@@ -595,6 +601,8 @@ class Game:
                 if not (kill_cause == DeathCause.MAFIA_KILL and
                         winner == self.doctor_protection):
                     winner.kill(kill_cause)
+                else:
+                    return VoteConsequence.MAFIAKILLFAILED
             else:
                 raise errors.WinnerAlreadyDeadError(winner)
             return winner
