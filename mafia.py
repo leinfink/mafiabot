@@ -572,11 +572,16 @@ class Game:
         self.doctor_protection = None
         try:
             target = self.players[self.get_most_common_vote(voted_players)]
-            self.doctor_protection = target
-            # TODO
-            pass
+            # can't protect yourself (or other doctors, I assume)
+            if not target.role == Role.DOCTOR:
+                self.doctor_protection = target
+            else:
+                # besseren error einfügen TODO
+                raise errors.WrongVoteError()
         except errors.NoUniqueWinnerError:
             raise errors.NoUniqueWinnerError(Vote.DOCTOR_VOTE)
+        except errors.WrongVoteError:
+            raise errors.WrongVoteError()
         else:
             self.doctor_vote_finished = True
             consequence = Consequence(VoteConsequence.PROTECTION, target)
