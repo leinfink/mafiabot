@@ -19,30 +19,26 @@ class Role(Enum):
     VILLAGER = 1
     MAFIA = 2
     COP = 3
-    DOCTOR = 4
 
 
 class Vote(Enum):
     MAFIA_VOTE = 0,
-    COP_VOTE = 1
+    COP_VOTE = 1,
     DAY_VOTE = 2
-    DOCTOR_VOTE = 3
 
 
 class VoteResult(Enum):
     UNDERWAY = 0,
-    FINISHED = 1
-    FAILED_HALF = 2
-    FAILED_ALL = 3
+    FINISHED = 1,
+    FAILED_HALF = 2,
+    FAILED_ALL = 3,
     FINISHED_ALL = 4
 
 
 class VoteConsequence(Enum):
-    VILLAGERKILL = 0
-    MAFIAKILL = 1
+    VILLAGERKILL = 0,
+    MAFIAKILL = 1,
     LOOKUP = 2
-    PROTECTION = 3
-    MAFIAKILLFAILED = 4
 
 
 class Consequence():
@@ -122,24 +118,18 @@ class Player():
 class Game:
     MAFIA_RATIO = 0.6  # x mafias per players
     COP_RATIO = 0.6  # x cops per players
-    MAFIA_AMOUNTS = [0, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3]  # mafia for player counts
-    COP_AMOUNTS = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # cops for player counts
-    #DOCTOR_AMOUNTS = [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
-    DOCTOR_AMOUNTS = [0,0,0,0,0,0,1,1,1,1,1,1,1]
+    MAFIA_AMOUNTS = [0, 1, 1, 1, 2, 2, 2, 2, 2, 3]  # mafia for player counts
+    COP_AMOUNTS = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # cops for player counts
 
     def __init__(self):
         self._status = GameStatus.NOT_RUNNING
         self.players = []
         self.mafia_vote_finished = False
         self.cop_vote_finished = False
-        self.doctor_vote_finished = False
         self.day_vote_finished = False
         self.cop_total = 0
         self.mafia_total = 0
-        self.doctor_total = 0
         self.villager_total = 0
-        self.day_vote_draw_count = 0
-        self.doctor_protection = None
         logger.debug('Created a game.')
 
     @property
@@ -170,13 +160,9 @@ class Game:
         self.cop_vote_finished = False
         self.mafia_vote_finished = False
         self.day_vote_finished = False
-        self.doctor_vote_finished = False
         self.cop_total = 0
-        self.doctor_total = 0
         self.villager_total = 0
-        self.day_vote_draw_count = 0
         self.mafia_total = 0
-        self.doctor_protection = None
         self.assign_roles()
         for p in self.players:
             p.status = PlayerStatus.ALIVE
@@ -201,16 +187,13 @@ class Game:
             # not a voting scenario
             raise errors.NotVotingScenarioError
         if self.status == GameStatus.NIGHT_VOTE:
-            if self.players[p].role not in [Role.MAFIA, Role.COP, Role.DOCTOR]:
+            if self.players[p].role not in [Role.MAFIA, Role.COP]:
                 raise errors.CantVoteError(self.players[p])
             elif (self.players[p].role == Role.MAFIA and
                   self.mafia_vote_finished):
                 raise errors.CantVoteError(self.players[p])
             elif (self.players[p].role == Role.COP and
                   self.cop_vote_finished):
-                raise errors.CantVoteError(self.players[p])
-            elif (self.players[p].role == Role.DOCTOR and
-                  self.doctor_vote_finished):
                 raise errors.CantVoteError(self.players[p])
             elif self.players[p].is_dead():
                 raise errors.CantVoteError(self.players[p])
@@ -223,8 +206,6 @@ class Game:
                 votetype = Vote.MAFIA_VOTE
             elif self.players[p].role == Role.COP:
                 votetype = Vote.COP_VOTE
-            elif self.players[p].role == Role.DOCTOR:
-                votetype = Vote.DOCTOR_VOTE
         vote_object = VoteReturnObject(self.players[p],
                                        self.players[target],
                                        votetype,
@@ -247,11 +228,6 @@ class Game:
             consequence = self.execute_cop_votes()
             vote_object.voteresult = VoteResult.FINISHED
             vote_object.consequence = consequence
-        elif (vote_object.vote == Vote.DOCTOR_VOTE and
-              self.check_votes(Vote.DOCTOR_VOTE)):
-            consequence = self.execute_doctor_votes()
-            vote_object.voteresult = VoteResult.FINISHED
-            vote_object.consequence = consequence
         if self.status == GameStatus.DAY_VOTE:
             if self.day_vote_finished:
                 vote_object.voteresult = VoteResult.FINISHED_ALL
@@ -259,17 +235,10 @@ class Game:
         elif self.status == GameStatus.NIGHT_VOTE:
             if self.mafia_vote_finished:
                 logger.debug('mafia finished')
-                still_docs_left = False
-                for p in self.players:
-                    if p.role == Role.DOCTOR and not p.is_dead():
-                        still_docs_left = True
-                        break
-                if (self.cop_vote_finished and
-                        (self.doctor_vote_finished or
-                         (still_docs_left is False))):
-                    logger.debug('mafia+cop+doctor finished')
+                if self.cop_vote_finished:
+                    logger.debug('mafia+cop finished')
                     vote_object.voteresult = VoteResult.FINISHED_ALL
-                    if votetype in [Vote.COP_VOTE, Vote.DOCTOR_VOTE]:
+                    if votetype == Vote.COP_VOTE:
                         logger.debug('parallel vote initiated')
                         con2 = self.execute_mafia_votes()
                         v = VoteReturnObject(None, None,
@@ -281,21 +250,17 @@ class Game:
                         consequence = self.execute_mafia_votes()
                         vote_object.consequence = consequence
                     self.cycle()
-                    self.doctor_protection = None
                 else:
                     still_cops_left = False
                     for p in self.players:
                         if p.role == Role.COP and not p.is_dead():
                             still_cops_left = True
-                            break
-                    if (still_cops_left is False and (self.doctor_vote_finished or
-                         (still_docs_left is False))):
+                    if still_cops_left is False:
                         vote_object.voteresult = VoteResult.FINISHED_ALL
                         if votetype == Vote.MAFIA_VOTE:
                             consequence = self.execute_mafia_votes()
                             vote_object.consequence = consequence
                         self.cycle()
-                        self.doctor_protection = None
         return vote_object
 
     def vote_choice(self, p, choice):
@@ -305,8 +270,6 @@ class Game:
     def reset(self):
         self.status = GameStatus.NOT_RUNNING
         self.players.clear()
-        self.day_vote_draw_count = 0
-        self.doctor_protection = None
 
     def assign_roles(self):
         player_total = len(self.players)
@@ -318,14 +281,9 @@ class Game:
             cop_total = Game.COP_AMOUNTS[player_total]
         else:
             cop_total = int(Game.COP_RATIO * player_total)
-        if player_total < len(Game.DOCTOR_AMOUNTS):
-            doc_total = Game.DOCTOR_AMOUNTS[player_total]
-        else:
-            doc_total = Game.DOCTOR_AMOUNTS[-1]
         self.mafia_total = mafia_total
         self.cop_total = cop_total
-        self.doctor_total = doc_total
-        mafia_counter, cop_counter, doctor_counter = 0, 0, 0
+        mafia_counter, cop_counter = 0, 0
 
         # assign mafia
         if mafia_total > 0:
@@ -344,15 +302,6 @@ class Game:
                     if self.players[r].role == Role.UNASSIGNED:
                         self.players[r].role = Role.COP
                         cop_counter += 1
-
-        # assign doctors
-        if doc_total > 0:
-            for i in range(0, doc_total):
-                while doctor_counter < i+1:
-                    r = random.randint(0, player_total - 1)
-                    if self.players[r].role == Role.UNASSIGNED:
-                        self.players[r].role = Role.DOCTOR
-                        doctor_counter += 1
 
         # assign villagers
         for p in self.players:
@@ -420,22 +369,6 @@ class Game:
             # everyone alive voted
             logger.debug('Cop votes complete.')
             return True
-        elif what_to_check == Vote.DOCTOR_VOTE:
-            for p in self.players:
-                # deads and non-cops dont matter
-                if p.is_dead() or p.role != Role.DOCTOR:
-                    continue
-                elif (p.role == Role.DOCTOR
-                      and self.doctor_vote_finished is True):
-                    # cops already voted
-                    continue
-                elif p.last_vote is None:
-                    logger.debug(f'{p.name} didn\'t vote yet.')
-                    # someone alive did not vote yet
-                    return False
-            # everyone alive voted
-            logger.debug('Doctor votes complete.')
-            return True
         else:
             # not a voting scenario
             raise errors.NotVotingScenarioError
@@ -465,14 +398,8 @@ class Game:
             target = self.kill_highest_from_voted(voted_players,
                                                   DeathCause.VILLAGER_KILL)
         except errors.NoUniqueWinnerError:
-            self.day_vote_draw_count += 1
-            if self.day_vote_draw_count > 2:
-                self.cycle()
-                raise errors.LastDrawnVoteError(Vote.DAY_VOTE)
-            else:
-                raise errors.NoUniqueWinnerError(Vote.DAY_VOTE)
+            raise errors.NoUniqueWinnerError(Vote.DAY_VOTE)
         else:
-            self.day_vote_draw_count = 0
             self.day_vote_finished = True
             consequence = Consequence(VoteConsequence.VILLAGERKILL,
                                       target)
@@ -488,7 +415,6 @@ class Game:
     def execute_night_votes(self):
         self.execute_mafia_votes()
         self.execute_cop_votes()
-        self.execute_doctor_votes()
         logger.debug('Night votes executed.')
 
     def execute_mafia_votes(self):
@@ -513,10 +439,6 @@ class Game:
             self.mafia_vote_finished = True
             consequence = Consequence(VoteConsequence.MAFIAKILL,
                                       target)
-            if isinstance(target, int):
-                if target == VoteConsequence.MAFIAKILLFAILED:
-                    consequence = Consequence(VoteConsequence.MAFIAKILLFAILED,
-                                              target)
         finally:
             # clear up votes (even if there was no unique winner)
             # people have to revote
@@ -557,43 +479,6 @@ class Game:
             if self.cop_vote_finished:
                 return consequence
 
-    def execute_doctor_votes(self):
-        voted_players = []
-        # gather all the votes
-        for p in self.players:
-            # only check doctor players' votes
-            if p.is_dead() or p.role != Role.DOCTOR:
-                continue
-            vote = p.last_vote
-            if vote is not None:
-                logger.debug(f'vote counted:{p.name} voted {vote}')
-                voted_players.append(vote)
-        self.doctor_vote_finished = False
-        self.doctor_protection = None
-        try:
-            target = self.players[self.get_most_common_vote(voted_players)]
-            # can't protect yourself (or other doctors, I assume)
-            if not target.role == Role.DOCTOR:
-                self.doctor_protection = target
-            else:
-                # besseren error einfügen TODO
-                raise errors.WrongVoteError()
-        except errors.NoUniqueWinnerError:
-            raise errors.NoUniqueWinnerError(Vote.DOCTOR_VOTE)
-        except errors.WrongVoteError:
-            raise errors.WrongVoteError()
-        else:
-            self.doctor_vote_finished = True
-            consequence = Consequence(VoteConsequence.PROTECTION, target)
-        finally:
-            # clear up votes (even if there was no unique winner)
-            # people have to revote
-            for p in self.players:
-                if p.role == Role.DOCTOR:
-                    p.last_vote = None
-            if self.doctor_vote_finished:
-                return consequence
-
     def kill_highest_from_voted(self, voted_players, kill_cause):
         # count the votes
         win_i = self.get_most_common_vote(voted_players)
@@ -602,12 +487,7 @@ class Game:
             # so we can kill someone, yay!
             winner = self.players[win_i]
             if not winner.is_dead():
-                # only make a mafia kill if not protected by the doctor
-                if not (kill_cause == DeathCause.MAFIA_KILL and
-                        winner == self.doctor_protection):
-                    winner.kill(kill_cause)
-                else:
-                    return VoteConsequence.MAFIAKILLFAILED
+                winner.kill(kill_cause)
             else:
                 raise errors.WinnerAlreadyDeadError(winner)
             return winner

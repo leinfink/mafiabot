@@ -60,8 +60,6 @@ COP_CHANNEL = int(os.getenv('DISCORD_COP_CHANNEL'))
 OPEN_VOICE_CHANNEL = int(os.getenv('DISCORD_OPEN_VOICE_CHANNEL'))
 MAFIA_VOICE_CHANNEL = int(os.getenv('DISCORD_MAFIA_VOICE_CHANNEL'))
 COP_VOICE_CHANNEL = int(os.getenv('DISCORD_COP_VOICE_CHANNEL'))
-DOCTOR_CHANNEL = int(os.getenv('DISCORD_DOCTOR_CHANNEL'))
-DOCTOR_VOICE_CHANNEL = int(os.getenv('DISCORD_DOCTOR_VOICE_CHANNEL'))
 ALIVE_ROLE = int(os.getenv('DISCORD_ALIVE_ROLE'))
 DEAD_ROLE = int(os.getenv('DISCORD_DEAD_ROLE'))
 DISCORD_CATEGORY = int(os.getenv('DISCORD_CATEGORY'))
@@ -156,7 +154,7 @@ async def join(ctx):
 
 @bot.command(name=_('rules'), help=_('Read the rules.'))
 async def rules(ctx):
-    msg = _("""— Some basics: ```There\'s villagers, mafia, cops and sometimes doctors.```""")
+    msg = _("""— Some basics: ```There\'s villagers, mafia, and cops.```""")
     msg += _("""``` The only command you need to  play is !vote <user> (or just ping them, <@user>).``````You can vote as soon as you like, but you can\'t take it back. For a vote to go through, everybody needs to have voted and there should be a clear \"winner\". ``````Daytime will last a maximum
         of""")
 
@@ -190,7 +188,7 @@ async def start(ctx):
     else:
         logger.info(_('Game started!'))
         msg = _('**Game started!**')
-        msg += _("""— Some basics: ```There\'s villagers, mafia, cops and sometimes doctors.```""")
+        msg += _("""— Some basics: ```There\'s villagers, mafia, and cops.```""")
         msg += _("""``` The only command you need to  play is !vote <user> (or just ping them, <@user>).``````You can vote as soon as you like, but you can\'t take it back. For a vote to go through, everybody needs to have voted and there should be a clear \"winner\". ``````Daytime will last a maximum
         of""")
 
@@ -208,15 +206,11 @@ async def start(ctx):
         \nGo join the village voice channel, then close your eyes!\n""")
         mafios = _('mafioso') if myGame.mafia_total == 1 else _('mafiosi')
         cops = _('cop') if myGame.cop_total == 1 else _('cops')
-        doctors = _('doctor') if myGame.doctor_total == 1 else _('doctors')
         villager_sl = myGame.villager_total == 1
         villagers = _('villager') if villager_sl else _('villagers')
         msg += "\n" + _('**There is') + " " + str(myGame.mafia_total)
         msg += " " + mafios + ", " + str(myGame.cop_total) + " "
-        msg += cops + " "
-        if myGame.doctor_total > 0:
-            msg += str(myGame.doctor_total) + " " + doctors + " "
-        msg += "and " + str(myGame.villager_total) + " "
+        msg += cops + " and " + str(myGame.villager_total) + " "
         msg += villagers + ".**"
         await change_bot_name(ctx)
         await ctx.send(msg)
@@ -233,6 +227,7 @@ async def start(ctx):
 
 
 @bot.command(name=_('stop'), help=_('Stop the game.'))
+@commands.is_owner()
 async def stop(ctx):
     cmdlog(ctx)
     try:
@@ -308,16 +303,13 @@ async def finished_vote_compute(ctx, msg, vote_return_object, update=True):
     switcher = {
         mafia.Vote.DAY_VOTE: _('Villager vote ended.'),
         mafia.Vote.MAFIA_VOTE: _('The mafia has decided.'),
-        mafia.Vote.COP_VOTE: _('The cops have made their choice.'),
-        mafia.Vote.DOCTOR_VOTE: _('The doctors have made their choice.')
+        mafia.Vote.COP_VOTE: _('The cops have made their choice.')
     }
     msg2 = "\n" + switcher.get(vote_return_object.vote)
     switcher = {
         mafia.VoteConsequence.VILLAGERKILL: _('They decided to lynch'),
         mafia.VoteConsequence.MAFIAKILL: _('They decided to kill'),
-        mafia.VoteConsequence.LOOKUP: _('They decided to look at'),
-        mafia.VoteConsequence.PROTECTION: _('They decided to protect'),
-        mafia.VoteConsequence.MAFIAKILLFAILED: ""
+        mafia.VoteConsequence.LOOKUP: _('They decided to look at')
     }
     msg2 += "\n**" + switcher.get(vote_return_object.consequence.
                                   voteconsequence)
@@ -325,23 +317,16 @@ async def finished_vote_compute(ctx, msg, vote_return_object, update=True):
     logger.debug(msg2)
     await change_bot_name(ctx)
     if vote_return_object.vote == mafia.Vote.COP_VOTE:
-        msg3 = "\n" + _('They are aligned with the')
-        if vote_return_object.consequence.target.role in [mafia.Role.MAFIA]:
-            role = _('mafia')
-        else:
-            role = _('villagers')
-        msg3 += " " + role + "."
+        msg3 = "\n" + _('They are a')
+        msg3 += " " + myMafiaBot.read_role(
+            vote_return_object.consequence.target.role) + "."
         await ctx.send(msg+msg2+msg3)
     if vote_return_object.vote == mafia.Vote.MAFIA_VOTE:
         if msg != "":
             await ctx.send(msg)
         logger.debug('mafiavotesending')
-        if not (vote_return_object.consequence.voteconsequence ==
-                mafia.VoteConsequence.MAFIAKILLFAILED):
-            await myMafiaBot.get_channels(ctx.guild)['open_channel'].send(
+        await myMafiaBot.get_channels(ctx.guild)['open_channel'].send(
                 msg2)
-    if vote_return_object.vote == mafia.Vote.DOCTOR_VOTE:
-        await ctx.send(msg+msg2)
     if vote_return_object.vote == mafia.Vote.DAY_VOTE:
         await myMafiaBot.get_channels(ctx.guild)['open_channel'].send(
                     msg+msg2)
@@ -363,19 +348,6 @@ async def vote(ctx, member: discord.Member):
     cmdlog(ctx)
     try:
         vote_return_object = myGame.vote_user(ctx.author.id, member.id)
-    except errors.LastDrawnVoteError as err:
-        logger.exception(_('Failed to vote again. Switch to next game state.'))
-        msg = myMafiaBot.error_message(err)
-        logger.warning(msg)
-        await ctx.send(msg)
-        myGame.cycle()
-        logger.info(_('Cycled game phase.'))
-        await change_bot_name(ctx)
-        await normal_game_update(ctx, restart_timer=True)
-        await send_status_update(ctx,
-                                 game_status=True,
-                                 channel=myMafiaBot.get_channels(ctx.guild)
-                                 ['open_channel'])
     except errors.Error as err:
         logger.exception(_('Failed to vote.'))
         msg = myMafiaBot.error_message(err)
@@ -426,23 +398,16 @@ async def change_bot_name(ctx):
 def game_over():
     alive_mafia = []
     alive_villagers = []
-    alive_doctors = []
     for p in myGame.players:
         if not p.is_dead():
             if p.role == mafia.Role.MAFIA:
                 alive_mafia.append(p)
             else:
                 alive_villagers.append(p)
-                if p.role == mafia.Role.DOCTOR:
-                    alive_doctors.append(p)
     if not alive_mafia:
         return mafia.Role.VILLAGER
     if not alive_villagers:
         return mafia.Role.MAFIA
-    # a draw = mafia win (if there's no doctors alive)
-    if len(alive_mafia) == len(alive_villagers):
-        if not alive_doctors:
-            return mafia.Role.MAFIA
     return False
 
 
@@ -468,18 +433,14 @@ async def normal_game_update(ctx, show_status=False,
         async with myMafiaBot.get_channels(ctx.guild)['open_channel'].typing():
             await assign_channels(ctx)
             if show_channel_list:
-                newmsg = (_('The mafia gather in ') +
-                          myMafiaBot.get_channels(
-                              ctx.guild)['mafia_channel'].mention + "\n" +
-                          _('The cops gather in ') +
-                          myMafiaBot.get_channels(
-                              ctx.guild)['cop_channel'].mention)
-                if myGame.doctor_total > 0:
-                    newmsg += ("\n" + _('The doctors gather in ')
-                            + myMafiaBot.get_channels(
-                                ctx.guild)['doctor_channel'].mention)
-                await myMafiaBot.get_channels(
-                    ctx.guild)['open_channel'].send(newmsg)
+                await myMafiaBot.get_channels(ctx.guild)['open_channel'].send(
+                    _('The mafia gather in ') +
+                    myMafiaBot.get_channels(
+                        ctx.guild)['mafia_channel'].mention + "\n" +
+                    _('The cops gather in ') +
+                    myMafiaBot.get_channels(
+                        ctx.guild)['cop_channel'].mention
+                )
             # assign roles and send the welcome msgs
             # in the respective channels
             await assign_all_discord_roles(ctx)
@@ -504,17 +465,12 @@ async def send_channel_notifs(ctx):
     # open_channel = channels['open_channel']
     mafia_channel = channels['mafia_channel']
     cop_channel = channels['cop_channel']
-    doctor_channel = channels['doctor_channel']
     # everyone_mention = ctx.guild.default_role.name
 
-    status = myMafiaBot.print_players(False)
-
     if myGame.status in [mafia.GameStatus.NIGHT_TALK]:
-        await mafia_channel.send(_('Prepare to commit a heinous crime!') + "\n" + status)
+        await mafia_channel.send(_('Prepare to commit a heinous crime!'))
         await cop_channel.send(_('Prepare to show off '
-                                 'your investigative prowess!') + "\n" + status)
-        if myGame.doctor_total > 0:
-            await doctor_channel.send(_('Decide who to protect!') + "\n" + status)
+                                 'your investigative prowess!'))
     # elif myGame.status in [mafia.GameStatus.DAY_TALK,
     #                       mafia.GameStatus.NOT_RUNNING]:
         # await open_channel.send(_('Discuss.'))
@@ -592,7 +548,6 @@ async def move_users_to_voice_channels(guild, channel_permits):
     open_channel = myMafiaBot.get_channels(guild)['open_voice_channel']
     mafia_channel = myMafiaBot.get_channels(guild)['mafia_voice_channel']
     cop_channel = myMafiaBot.get_channels(guild)['cop_voice_channel']
-    doctor_channel = myMafiaBot.get_channels(guild)['doctor_voice_channel']
 
     if myGame.status in [mafia.GameStatus.NOT_RUNNING,
                          mafia.GameStatus.DAY_TALK,
@@ -618,9 +573,6 @@ async def move_users_to_voice_channels(guild, channel_permits):
             if cop_channel:
                 can_move_to_channels += channel_permits[
                     Channel.COP][Permissions.ALLOW_VIEW]
-            if doctor_channel:
-                can_move_to_channels += channel_permits[
-                    Channel.DOCTOR][Permissions.ALLOW_VIEW]
             for m in open_channel.members:
                 if mafia.Player(m.id) not in can_move_to_channels:
                     # definitely kick nonplaying people
@@ -628,7 +580,7 @@ async def move_users_to_voice_channels(guild, channel_permits):
                         await m.move_to(None)
                         continue
                     # maybe too slow?
-                    await myMafiaBot.move_to_their_own_channel(guild, m, mafia.Player(m.id).role)
+                    await myMafiaBot.move_to_their_own_channel(guild, m)
                     # maybe just everyone instead
                     # await m.move_to(None)
 
@@ -644,12 +596,7 @@ async def move_users_to_voice_channels(guild, channel_permits):
                 if m.voice is not None:
                     # we can only move if user is already connected
                     await m.move_to(cop_channel)
-        if doctor_channel:
-            for p in channel_permits[Channel.DOCTOR][Permissions.ALLOW_VIEW]:
-                m = guild.get_member(p.ID)
-                if m.voice is not None:
-                    # we can only move if user is already connected
-                    await m.move_to(doctor_channel)
+
 
 async def OLDmove_to_their_own_channel(guild, member):
     overwrites = {
@@ -714,14 +661,6 @@ async def assign_channels(ctx):
         await set_channel_permits(guild, channels['cop_voice_channel'],
                                   channel_permits[Channel.COP],
                                   voice=True)
-    if channels['doctor_channel']:
-        await set_channel_permits(guild, channels['doctor_channel'],
-                                  channel_permits[Channel.DOCTOR],
-                                  voice=False)
-    if channels['doctor_voice_channel']:
-        await set_channel_permits(guild, channels['doctor_voice_channel'],
-                                  channel_permits[Channel.DOCTOR],
-                                  voice=True)
     await move_users_to_voice_channels(guild, channel_permits)
 
 
@@ -742,10 +681,6 @@ async def reset_channel_permissions(ctx=None, guild=None):
         await reset_permission_with_hiding(channels['cop_channel'])
     if channels['cop_voice_channel']:
         await reset_permission_with_hiding(channels['cop_voice_channel'])
-    if channels['doctor_channel']:
-        await reset_permission_with_hiding(channels['doctor_channel'])
-    if channels['doctor_voice_channel']:
-        await reset_permission_with_hiding(channels['doctor_voice_channel'])
     logger.info(_('Channel permissions reset.'))
 
 

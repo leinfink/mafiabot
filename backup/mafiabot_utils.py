@@ -21,8 +21,6 @@ COP_CHANNEL = int(os.getenv('DISCORD_COP_CHANNEL'))
 OPEN_VOICE_CHANNEL = int(os.getenv('DISCORD_OPEN_VOICE_CHANNEL'))
 MAFIA_VOICE_CHANNEL = int(os.getenv('DISCORD_MAFIA_VOICE_CHANNEL'))
 COP_VOICE_CHANNEL = int(os.getenv('DISCORD_COP_VOICE_CHANNEL'))
-DOCTOR_CHANNEL = int(os.getenv('DISCORD_DOCTOR_CHANNEL'))
-DOCTOR_VOICE_CHANNEL = int(os.getenv('DISCORD_DOCTOR_VOICE_CHANNEL'))
 ALIVE_ROLE = int(os.getenv('DISCORD_ALIVE_ROLE'))
 DEAD_ROLE = int(os.getenv('DISCORD_DEAD_ROLE'))
 DISCORD_CATEGORY = int(os.getenv('DISCORD_CATEGORY'))
@@ -51,15 +49,14 @@ class ErrorContext(Enum):
 
 
 class Channel(Enum):
-    OPEN = 0
-    MAFIA = 1
+    OPEN = 0,
+    MAFIA = 1,
     COP = 2
-    DOCTOR = 3
 
 
 class Permissions(Enum):
-    ALLOW_VIEW = 0
-    ALLOW_WRITE = 1
+    ALLOW_VIEW = 0,
+    ALLOW_WRITE = 1,
     BLOCK = 2
 
 
@@ -83,8 +80,6 @@ class MafiaBot():
                 'mafia_voice_channel': guild.get_channel(MAFIA_VOICE_CHANNEL),
                 'cop_channel': guild.get_channel(COP_CHANNEL),
                 'cop_voice_channel': guild.get_channel(COP_VOICE_CHANNEL),
-                'doctor_channel': guild.get_channel(DOCTOR_CHANNEL),
-                'doctor_voice_channel': guild.get_channel(DOCTOR_VOICE_CHANNEL),
                 'category': guild.get_channel(DISCORD_CATEGORY)
             }
         return self.channels
@@ -100,8 +95,7 @@ class MafiaBot():
             channels.update(
                 {Channel.OPEN: self.get_openblocked_channel_users(),
                  Channel.MAFIA: self.get_mafia_channel_users(),
-                 Channel.COP: self.get_cop_channel_users(),
-                 Channel.DOCTOR: self.get_doctor_channel_users()})
+                 Channel.COP: self.get_cop_channel_users()})
         elif phase in open_phase:
             channels.update(
                 {Channel.OPEN: self.get_open_channel_users(),
@@ -112,8 +106,7 @@ class MafiaBot():
                  # what
                  # why did I think that was smart
                  # nonono he aint seeing anything
-                 Channel.COP: self.get_hidden_channel_users(),
-                 Channel.DOCTOR: self.get_hidden_channel_users()})
+                 Channel.COP: self.get_hidden_channel_users()})
         return channels
 
     def get_open_channel_users(self):
@@ -177,20 +170,6 @@ class MafiaBot():
         return {Permissions.ALLOW_VIEW: allow_view,
                 Permissions.ALLOW_WRITE: allow_write}
 
-    def get_doctor_channel_users(self):
-        """users and permissions for doctor channel when active"""
-        allow_view, allow_write = [], []
-        for p in self.game.players:
-            if (p.role == mafia.Role.DOCTOR or
-                p.role == mafia.Role.UNASSIGNED or
-                    p.status != mafia.PlayerStatus.ALIVE):
-                allow_view.append(p)
-                if (p.role == mafia.Role.DOCTOR and
-                        p.status == mafia.PlayerStatus.ALIVE):
-                    allow_write.append(p)
-        return {Permissions.ALLOW_VIEW: allow_view,
-                Permissions.ALLOW_WRITE: allow_write}
-
     def get_cophidden_channel_users(self):
         """users and permissions for cop channel when not active"""
         allow_view, allow_write = [], []
@@ -213,6 +192,7 @@ class MafiaBot():
             time = WAITING_TIME_NIGHT_IN_SEC - WARNING_TIMER_IN_SEC
         self.timer_callmethod = callmethod
         self.ctx = ctx
+        #loop = asyncio.get_event_loop()
         self.timer = asyncio.create_task(self.timer_cycle(time))
 
     async def timer_cycle(self, time):
@@ -226,8 +206,6 @@ class MafiaBot():
             else:
                 await self.get_channels()['mafia_channel'].send(msg)
                 await self.get_channels()['cop_channel'].send(msg)
-                if self.game.doctor_total > 0:
-                    await self.get_channels()['doctor_channel'].send(msg)
             self.before_warning_time = False
             self.timer = asyncio.create_task(
                 self.timer_cycle(WARNING_TIMER_IN_SEC))
@@ -280,7 +258,6 @@ class MafiaBot():
             errors.CantVoteError: self.cant_vote_err,
             errors.NotVotingScenarioError: self.no_voting_scenario_err,
             errors.NoUniqueWinnerError: self.no_unique_vote_err,
-            errors.LastDrawnVoteError: self.last_drawn_vote_err,
             errors.AlreadyRunningError: self.already_running_err,
             errors.AlreadyJoinedError: self.already_joined_err,
             errors.NotRunningError: self.not_running_err,
@@ -334,9 +311,6 @@ class MafiaBot():
         else:
             return _('The vote result was not clear.')
 
-    def last_drawn_vote_err(self, err):
-        return _('The vote result was, again, not clear, so this vote will be skipped.')
-
     def already_running_err(self, err):
         return _('The game has already started.') + self.add_context(err)
 
@@ -361,12 +335,11 @@ class MafiaBot():
             mafia.Role.VILLAGER: _('villager'),
             mafia.Role.MAFIA: _('mafioso'),
             mafia.Role.COP: _('cop'),
-            mafia.Role.UNASSIGNED: _('unassigned'),
-            mafia.Role.DOCTOR: _('doctor')
+            mafia.Role.UNASSIGNED: _('unassigned')
         }
         return switcher.get(role)
 
-    async def move_to_their_own_channel(self, guild, member, role=None):
+    async def move_to_their_own_channel(self, guild, member):
         if member.id in self.userchannels:
             await member.move_to(self.userchannels[member.id])
         else:
@@ -377,11 +350,8 @@ class MafiaBot():
                     read_messages=True, speak=False)
             }
             category = self.get_channels(guild)['category']
-            title = _('Your bed')
-            if role == mafia.Role.DOCTOR:
-                title == _('Doctor')
             secret_channel = await guild.create_voice_channel(
-                title,
+                _('Your bed'),
                 category=category,
                 overwrites=overwrites)
             self.userchannels[member.id] = secret_channel
